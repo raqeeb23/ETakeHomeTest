@@ -27,13 +27,13 @@ struct FormResponse: Decodable {
 
         formTitle = try container.decode(String.self, forKey: .formTitle)
 
-        let safeFieldArray = try container.decode(
-            SafeFieldArray.self,
+        let wrappedFields = try container.decode(
+            [Safe<FieldWrapper>].self,
             forKey: .fields
         )
 
-        fields = safeFieldArray.fields.sorted {
-            $0.order < $1.order
-        }
+        fields = wrappedFields
+            .compactMap { $0.value?.field }
+            .sorted { $0.order < $1.order }
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DropdownFieldModel: Decodable, FormField {
+struct DropdownFieldModel: Decodable, FormFieldRepresentable {
 
     let id: String
     let order: Int
@@ -15,11 +15,11 @@ struct DropdownFieldModel: Decodable, FormField {
     let required: Bool
     let errorMessage: String?
     let allowMultiple: Bool
-    let defaultValues: [String]
+    let defaultValues: [String]?
     let options: [DropdownOption]
 }
 
-struct DropdownOption: Decodable {
+struct DropdownOption: Decodable, Identifiable {
 
     let id: String
     let label: String

@@ -19,13 +19,10 @@ struct FieldWrapper: Decodable {
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        guard
-            let type = try? container.decode(FieldType.self, forKey: .type)
-        else {
-
-            field = nil
-            return
-        }
+        let type = try container.decode(
+            FieldType.self,
+            forKey: .type
+        )
 
         field = try DefaultFieldDecoder()
             .decode(from: decoder, type: type)
