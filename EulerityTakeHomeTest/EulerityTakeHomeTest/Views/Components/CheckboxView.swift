@@ -5,7 +5,6 @@
 //  Created by Rakib on 27/06/26.
 //
 
-
 import SwiftUI
 
 struct CheckboxView: View {
@@ -17,30 +16,34 @@ struct CheckboxView: View {
 
     let error: String?
 
+    @Environment(\.openURL)
+    private var openURL
+
     var body: some View {
 
         VStack(alignment: .leading, spacing: 8) {
 
-            Button {
+            HStack(alignment: .top, spacing: 12) {
 
-                checked.toggle()
+                Button {
 
-            } label: {
+                    checked.toggle()
 
-                HStack(alignment: .top) {
+                } label: {
 
                     Image(systemName: checked
                           ? "checkmark.square.fill"
                           : "square")
-
-                    Text(model.label)
-
-                    Spacer()
+                        .font(.title3)
 
                 }
+                .buttonStyle(.plain)
+
+                checkboxText
+
+                Spacer()
 
             }
-            .buttonStyle(.plain)
 
             if let error {
 
@@ -53,5 +56,43 @@ struct CheckboxView: View {
         }
 
     }
+}
 
+private extension CheckboxView {
+
+    @ViewBuilder
+    var checkboxText: some View {
+
+        if let metadata = model.metadata,
+           let (title, url) = metadata.first {
+
+            let components = model.label.components(separatedBy: title)
+
+            if components.count == 2 {
+
+                (
+                    Text(components[0])
+                    + Text(title)
+                        .foregroundStyle(
+                            Color(hex: model.clickableTextColor ?? "#2563EB")
+                        )
+                        .underline()
+                    + Text(components[1])
+                )
+                .onTapGesture {
+                    openURL(url)
+                }
+
+            } else {
+
+                Text(model.label)
+
+            }
+
+        } else {
+
+            Text(model.label)
+
+        }
+    }
 }

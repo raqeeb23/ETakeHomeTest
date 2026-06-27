@@ -16,18 +16,43 @@ struct DefaultFieldDecoder: FieldDecoding {
         switch type {
 
         case .text:
-            return .text(try TextFieldModel(from: decoder))
+
+            guard let model = try? TextFieldModel(from: decoder) else {
+                return nil
+            }
+
+            guard model.subtype != .unknown else {
+                return nil
+            }
+
+            return .text(model)
 
         case .dropdown:
-            return .dropdown(try DropdownFieldModel(from: decoder))
+
+            guard let model = try? DropdownFieldModel(from: decoder) else {
+                return nil
+            }
+
+            return .dropdown(model)
 
         case .checkbox:
-            return .checkbox(try CheckboxFieldModel(from: decoder))
+
+            guard let model = try? CheckboxFieldModel(from: decoder) else {
+                return nil
+            }
+
+            return .checkbox(model)
 
         case .toggle:
-            return .toggle(try ToggleFieldModel(from: decoder))
+
+            guard let model = try? ToggleFieldModel(from: decoder) else {
+                return nil
+            }
+
+            return .toggle(model)
 
         case .unknown:
+
             return nil
         }
     }

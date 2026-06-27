@@ -14,15 +14,19 @@ struct PlainTextField: View {
 
     @Binding
     var text: String
+    
+    let hasError: Bool
 
     var body: some View {
 
-        TextField(
-            model.placeholder ?? "",
-            text: $text
-        )
-        .textFieldStyle(.roundedBorder)
-
+        InputContainer(hasError: hasError) {
+            TextField(
+                model.placeholder ?? "",
+                text: $text
+            )
+            .padding(.horizontal, 12)
+            .frame(height: 44)
+        }
     }
 
 }

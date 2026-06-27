@@ -14,14 +14,17 @@ struct SecureTextInput: View {
 
     @Binding
     var text: String
+    let hasError: Bool
+
 
     var body: some View {
 
-        SecureField(
-            model.placeholder ?? "",
-            text: $text
-        )
-        .textFieldStyle(.roundedBorder)
+        InputContainer(hasError: hasError) {
+            SecureField(
+                model.placeholder ?? "",
+                text: $text
+            )
+        }
 
     }
 

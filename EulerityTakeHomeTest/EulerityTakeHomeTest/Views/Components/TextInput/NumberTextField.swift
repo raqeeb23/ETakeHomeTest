@@ -14,15 +14,17 @@ struct NumberTextField: View {
 
     @Binding
     var text: String
+    let hasError: Bool
 
     var body: some View {
 
-        TextField(
-            model.placeholder ?? "",
-            text: $text
-        )
-        .keyboardType(.numberPad)
-        .textFieldStyle(.roundedBorder)
+        InputContainer(hasError: hasError) {
+            TextField(
+                model.placeholder ?? "",
+                text: $text
+            )
+            .keyboardType(.numberPad)
+        }
 
     }
 

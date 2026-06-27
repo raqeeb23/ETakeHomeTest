@@ -95,6 +95,28 @@ extension FormViewModel {
         validationErrors = result.errors
         return result.isValid
     }
+    
+    func clearValidation(for id: String) {
+        validationErrors.removeValue(forKey: id)
+    }
+    
+    private func validateField(id: String) {
+
+        guard let field = fields.first(where: { $0.id == id }) else {
+            return
+        }
+
+        let result = validator.validate(
+            fields: [field],
+            values: values
+        )
+
+        if let error = result.errors[id] {
+            validationErrors[id] = error
+        } else {
+            validationErrors.removeValue(forKey: id)
+        }
+    }
 }
 
 // MARK: - Save
@@ -102,12 +124,31 @@ extension FormViewModel {
 extension FormViewModel {
 
     func save() {
+
         guard validate() else {
-            print(validationErrors)
             return
         }
 
-        print(values)
+        let values = Dictionary(
+            uniqueKeysWithValues: self.values.map {
+                ($0.key, $0.value.submissionValue)
+            }
+        )
+
+        let payload = SubmissionPayload(values: values)
+
+        do {
+
+            print(
+                try payload.prettyPrintedJSON()
+            )
+
+        } catch {
+
+            print(error)
+
+        }
+
     }
 }
 
@@ -119,10 +160,17 @@ extension FormViewModel {
     func textBinding(id: String) -> Binding<String> {
 
         Binding {
-            guard case .text(let value)? = self.values[id] else { return "" }
+
+            guard case .text(let value)? = self.values[id] else {
+                return ""
+            }
+
             return value
+
         } set: {
+
             self.values[id] = .text($0)
+            self.validateField(id: id)
         }
     }
 
@@ -133,6 +181,7 @@ extension FormViewModel {
             return value
         } set: {
             self.values[id] = .bool($0)
+            self.validateField(id: id)
         }
     }
 
@@ -143,6 +192,7 @@ extension FormViewModel {
             return value
         } set: {
             self.values[id] = .singleSelection($0)
+            self.validateField(id: id)
         }
     }
 
@@ -153,6 +203,9 @@ extension FormViewModel {
             return value
         } set: {
             self.values[id] = .multipleSelection($0)
+            self.validateField(id: id)
         }
     }
 }
+
+

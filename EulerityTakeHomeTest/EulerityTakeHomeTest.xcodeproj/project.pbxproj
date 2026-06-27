@@ -29,9 +29,22 @@
 		2DE4B5722FEF057600B999A2 /* EulerityTakeHomeTestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EulerityTakeHomeTestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2DE4B6172FEFC2C100B999A2 /* Exceptions for "EulerityTakeHomeTest" folder in "EulerityTakeHomeTestTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/form.json,
+			);
+			target = 2DE4B5672FEF057600B999A2 /* EulerityTakeHomeTestTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2DE4B55D2FEF057400B999A2 /* EulerityTakeHomeTest */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2DE4B6172FEFC2C100B999A2 /* Exceptions for "EulerityTakeHomeTest" folder in "EulerityTakeHomeTestTests" target */,
+			);
 			path = EulerityTakeHomeTest;
 			sourceTree = "<group>";
 		};

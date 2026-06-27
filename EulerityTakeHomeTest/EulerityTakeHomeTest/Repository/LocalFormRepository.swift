@@ -9,13 +9,18 @@ import Foundation
 
 final class LocalFormRepository: FormRepository {
 
+    private let bundle: Bundle
+
+    init(bundle: Bundle = .main) {
+        self.bundle = bundle
+    }
+
     func loadForm() throws -> FormResponse {
 
-        guard let url = Bundle.main.url(
+        guard let url = bundle.url(
             forResource: "form",
             withExtension: "json"
         ) else {
-
             throw RepositoryError.fileNotFound
         }
 

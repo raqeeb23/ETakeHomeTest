@@ -29,39 +29,42 @@ struct TextInputView: View {
 
                 PlainTextField(
                     model: model,
-                    text: $text
+                    text: $text,
+                    hasError: hasError
                 )
 
             case .secure:
 
                 SecureTextInput(
                     model: model,
-                    text: $text
+                    text: $text,
+                    hasError: hasError
                 )
 
             case .number:
 
                 NumberTextField(
                     model: model,
-                    text: $text
+                    text: $text,
+                    hasError: hasError
                 )
 
             case .uri:
 
                 URLTextField(
                     model: model,
-                    text: $text
+                    text: $text,
+                    hasError: hasError
                 )
 
             case .multiline:
 
                 MultilineTextField(
                     model: model,
-                    text: $text
+                    text: $text,
+                    hasError: hasError
                 )
-
-            case .unknown:
-
+            default:
                 EmptyView()
             }
 
@@ -72,11 +75,8 @@ struct TextInputView: View {
                     Spacer()
 
                     Text("\(text.count)/\(max)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
+                        .foregroundStyle(text.count >= max ? Color.red : Color.secondary)
                 }
-
             }
 
             if let error {
@@ -84,11 +84,25 @@ struct TextInputView: View {
                 Text(error)
                     .font(.caption)
                     .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .transition(.opacity)
 
             }
 
         }
-
+        .onChange(of: text) { (_, newValue) in
+            guard let max = model.maxLength else { return }
+            if newValue.count > max {
+                text = String(newValue.prefix(max))
+            }
+        }
     }
+}
 
+
+private extension TextInputView {
+
+    var hasError: Bool {
+        error != nil
+    }
 }

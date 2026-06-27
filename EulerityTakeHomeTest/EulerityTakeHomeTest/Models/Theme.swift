@@ -26,18 +26,18 @@ struct Theme: Decodable {
 extension Theme {
 
     var background: Color {
-        Color(backgroundColor)
+        Color(hex: backgroundColor)
     }
 
     var text: Color {
-        Color(textColor)
+        Color(hex: textColor)
     }
 
     var border: Color {
-        Color(borderColor)
+        Color(hex: borderColor)
     }
 
     var error: Color {
-        Color(errorColor)
+        Color(hex: errorColor)
     }
 }

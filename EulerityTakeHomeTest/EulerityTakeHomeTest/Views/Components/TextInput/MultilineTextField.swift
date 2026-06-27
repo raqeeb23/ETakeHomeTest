@@ -15,14 +15,22 @@ struct MultilineTextField: View {
     @Binding
     var text: String
 
+    let hasError: Bool
+
     var body: some View {
 
         TextEditor(text: $text)
             .frame(minHeight: 120)
+            .padding(8)
             .overlay {
 
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray)
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(
+                        hasError
+                        ? Color.red
+                        : Color.gray.opacity(0.35),
+                        lineWidth: 1
+                    )
 
             }
 
