@@ -2,6 +2,11 @@
 
 A dynamic form rendering engine built using **SwiftUI**, **MVVM**, and **Codable** that renders an entire form from a local JSON payload. The application follows a Server-Driven UI (SDUI) approach where the backend controls the form structure, ordering, validation rules, and theming without requiring application updates.
 
+
+https://github.com/user-attachments/assets/91977dc5-3751-48af-ad43-a466775714e2
+
+
+
 ---
 
 # Features
