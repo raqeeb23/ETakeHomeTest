@@ -1,138 +1,254 @@
 # Server-Driven UI Dynamic Form Engine
 
-A dynamic form rendering engine built with **SwiftUI** using a **Server-Driven UI (SDUI)** architecture. The application parses a JSON payload and dynamically renders form components without requiring app updates for form changes.
+A dynamic form rendering engine built using **SwiftUI**, **MVVM**, and **Codable** that renders an entire form from a local JSON payload. The application follows a Server-Driven UI (SDUI) approach where the backend controls the form structure, ordering, validation rules, and theming without requiring application updates.
 
 ---
 
-## Features
+# Features
 
-- Dynamic form rendering
-- Defensive polymorphic Codable parsing
-- Server-driven architecture
-- Unknown field types are skipped safely
-- Unknown text subtypes are skipped safely
-- Theme support using hex colors
-- Required field validation
-- Character limit validation
-- Single & Multi-select dropdowns
-- Toggle support
-- Checkbox support
-- Strongly typed submission payload
-- MVVM Architecture
+* Dynamic form rendering from JSON
+* Polymorphic Codable parsing
+* Defensive parsing of unknown or malformed components
+* Ordered rendering using explicit `order`
+* Global theming using hex color values
+* Multiple text field subtypes
+
+  * Plain
+  * Multiline
+  * Number
+  * URL
+  * Secure
+* Dropdown (Single & Multi Select)
+* Toggle
+* Checkbox
+* Required field validation
+* Character counter & max length enforcement
+* Strongly typed submission payload
+* Offline-first architecture
 
 ---
 
-## Architecture
+# Architecture
+
+The project follows a layered MVVM architecture.
 
 ```
-Presentation
-│
-├── SwiftUI Views
-├── Components
-│
+SwiftUI Views
+        │
+        ▼
 ViewModel
-│
+        │
+        ▼
 Repository
-│
+        │
+        ▼
 Parser
-│
+        │
+        ▼
 Models
 ```
 
-### Parsing Flow
-
-```
-JSON
-   │
-   ▼
-FieldWrapper
-   │
-   ▼
-DefaultFieldDecoder
-   │
-   ▼
-Concrete Models
-   │
-   ▼
-Field Enum
-```
-
-Unknown or malformed fields are skipped during decoding to prevent the entire payload from failing.
+The parser is intentionally separated from the UI layer so decoding decisions remain independent from rendering.
 
 ---
 
-## Folder Structure
+# Parsing Flow
 
 ```
-Sources
+JSON
+
+        │
+
+        ▼
+
+FieldWrapper
+
+        │
+
+        ▼
+
+DefaultFieldDecoder
+
+        │
+
+        ▼
+
+Concrete Field Models
+
+        │
+
+        ▼
+
+Field Enum
+
+        │
+
+        ▼
+
+SwiftUI Rendering
+```
+
+Unknown component types and malformed field objects are skipped during decoding instead of causing the entire payload to fail.
+
+---
+
+# Product Decisions
+
+### 1. Unknown Components
+
+The assignment only specified that unknown component types should not crash the application.
+
+Instead of creating placeholder UI or rendering empty views, unsupported and malformed fields are filtered during decoding itself.
+
+This keeps the UI layer unaware of unsupported backend models and makes the parser more resilient.
+
+---
+
+### 2. Ordering
+
+Fields are rendered using the explicit `order` property rather than relying on the array order received from the backend.
+
+This makes rendering deterministic even if the backend changes the payload ordering.
+
+---
+
+### 3. Validation Timing
+
+Validation is triggered when the user presses **Save**, while individual fields are revalidated as the user edits them.
+
+This avoids showing errors immediately on first launch while still providing immediate feedback after user interaction.
+
+---
+
+# Defensive Parsing
+
+The parser intentionally ignores:
+
+* Unknown field types
+* Unknown text subtypes
+* Malformed field objects
+
+This ensures that one invalid component never prevents valid components from rendering.
+
+---
+
+# Project Structure
+
+```
+EulerityTakeHomeTest
 
 ├── Models
 ├── Parsing
 ├── Repository
+├── Resources
+├── Validation
 ├── ViewModels
 ├── Views
-├── Validation
-├── Resources
+├── Extensions
+└── Tests
 ```
 
 ---
 
-## Validation
+# Validation
 
-Supported validations:
+The application currently supports:
 
-- Required fields
-- Maximum character limit
-- Checkbox validation
-- Dropdown validation
+* Required field validation
+* Character limit validation
+* Checkbox validation
+* Dropdown validation
 
----
-
-## Defensive Parsing
-
-The decoder intentionally ignores:
-
-- Unknown component types
-- Unknown text subtypes
-- Malformed field objects
-
-This ensures one invalid component never breaks the complete form.
+If validation succeeds, the submitted values are printed as a strongly typed JSON payload.
 
 ---
 
-## Technologies
+# Technologies Used
 
-- Swift 6
-- SwiftUI
-- Codable
-- MVVM
-- Repository Pattern
+* Swift 6
+* SwiftUI
+* Codable
+* MVVM
+* Repository Pattern
+* XCTest
 
 ---
 
-## Running the Project
+# Running the Project
 
-1. Open the project in Xcode 16+
+1. Open the project using Xcode 16 or later.
 2. Ensure `form.json` is included in the application target.
-3. Build & Run.
+3. Build and Run.
+4. Press **Save** after filling the form to validate and print the resulting payload.
 
 ---
 
-## Tests
+# Unit Tests
 
-Current unit tests include:
+Unit tests cover:
 
-- JSON decoding
-- Unknown field skipping
-- Unknown subtype skipping
-- Validation rules
+* Successful JSON parsing
+* Unknown component handling
+* Unknown subtype handling
+* Validation rules
+* Defensive decoding
 
 ---
 
-## Future Improvements
+# What I Would Improve With More Time
 
-- Async network form loading
-- Remote caching
-- AttributedString hyperlinks
-- Accessibility improvements
-- Snapshot testing
+If this project were extended beyond the scope of the assignment, I would focus on:
+
+* Rich text support for checkbox metadata using `AttributedString`
+* Dynamic keyboard focus management using `@FocusState`
+* Regex-based validation for text fields
+* Snapshot/UI tests
+* Loading forms from a remote API with local caching
+* Accessibility improvements (VoiceOver, Dynamic Type)
+
+---
+
+# Challenges & How I Worked Through Them
+
+### Defensive Polymorphic Decoding
+
+One challenge was ensuring that unsupported or malformed components would not fail decoding of the complete payload.
+
+Instead of allowing decoding failures to propagate, the parser was redesigned to safely skip invalid components while continuing to decode valid ones.
+
+---
+
+### Building a Reusable Dynamic UI
+
+The form contains multiple field types with different validation rules while sharing common styling.
+
+To reduce duplication, common styling was extracted into reusable components and validation logic was separated from the UI.
+
+---
+
+### Swift 6 Concurrency
+
+While integrating the repository into the ViewModel, Swift 6 actor isolation warnings appeared.
+
+The initialization flow was adjusted to remove concurrency warnings while keeping the architecture testable and maintaining dependency injection.
+
+---
+
+# AI Collaboration
+
+AI was used as an engineering assistant throughout development.
+
+Rather than generating the project in a single prompt, development was performed incrementally through multiple implementation, debugging, review, and refactoring cycles.
+
+A detailed collaboration record is included in **AI_COLLABORATION_LOG.md**.
+
+---
+
+# Future Improvements
+
+* Rich text hyperlinks
+* Async form loading
+* Remote caching
+* Better accessibility
+* Snapshot testing
+* Theme switching
