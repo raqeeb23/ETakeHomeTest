@@ -11,7 +11,7 @@ import SwiftUI
 struct EulerityTakeHomeTestApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            FormScreen()
         }
     }
 }

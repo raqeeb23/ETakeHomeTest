@@ -13,14 +13,14 @@
 import SwiftUI
 
 struct DynamicFieldView: View {
-
+    
     let field: Field
-
+    
     @ObservedObject
     var viewModel: FormViewModel
-
+    
     var body: some View {
-
+        
         switch field {
         case .text(let model):
             TextInputView(model: model,
@@ -32,10 +32,14 @@ struct DynamicFieldView: View {
                 viewModel: viewModel,
                 error: viewModel.validationErrors[model.id]
             )
-        case .checkbox:
-            EmptyView()
-        case .toggle:
-            EmptyView()
+        case .checkbox(let model):
+            CheckboxView(model: model,
+                         checked: viewModel.boolBinding(id: model.id),
+                         error: viewModel.validationErrors[model.id])
+        case .toggle(let model):
+            ToggleView(model: model,
+                       isOn: viewModel.boolBinding(id: model.id),
+                       error: viewModel.validationErrors[model.id])
         }
-        }
+    }
 }

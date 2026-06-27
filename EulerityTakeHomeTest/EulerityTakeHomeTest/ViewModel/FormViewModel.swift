@@ -12,15 +12,22 @@ import Combine
 final class FormViewModel: ObservableObject {
 
     @Published private(set) var theme: Theme?
-    @Published private(set) var title: String = ""
+    @Published private(set) var title = ""
     @Published private(set) var fields: [Field] = []
+
     @Published var values: [String: FieldValue] = [:]
     @Published var validationErrors: [String: String] = [:]
 
     private let validator = FormValidator()
+    private let repository: FormRepository
 
-    init() {
+    init(repository: FormRepository) {
+        self.repository = repository
         loadForm()
+    }
+
+    convenience init() {
+        self.init(repository: LocalFormRepository())
     }
 }
 
@@ -30,22 +37,17 @@ private extension FormViewModel {
 
     func loadForm() {
 
-        guard let url = Bundle.main.url(forResource: "form",withExtension: "json") else {
-            print("form.json not found.")
-            return
-        }
-
         do {
-            let data = try Data(contentsOf: url)
-            let response = try JSONDecoder().decode(
-                FormResponse.self,
-                from: data
-            )
+            let response = try repository.loadForm()
 
             theme = response.theme
+
             title = response.formTitle
+
             fields = response.fields
+
             populateDefaultValues()
+
         } catch {
             print(error.localizedDescription)
         }
